@@ -6,7 +6,7 @@ build:
 build_back:
 	docker build -t cannlytics-back -f Dockerfile .
 
-run:
+run: build
 	docker run --rm -it \
 	--name cannlytics-front \
 	-p 8088:8080 \
@@ -15,20 +15,12 @@ run:
 	--env-file docker.env \
 	cannlytics-front $(c)
 
-back:
+back: build_back .env
 	docker run --rm -it \
 	--name cannlytics-back \
 	-p 8089:8080 \
 	-v `pwd`/.env:/app/.env \
 	cannlytics-back
-
-# use production backend for local testing
-prod:
-	cp .env.production .env.development
-
-# restore development file
-dev:
-	git checkout -- .env.development
 
 install:
 	make run c="npm install"
@@ -42,13 +34,15 @@ audit-fix:
 .PHONY: all build run update audit-fix
 
 docker.env:
-	cp .env.example docker.env
+	cp .env docker.env
 
 .env:
-	@docker run --rm -it \
+	cp .env.example .env
+	sed -i '/SECRET_KEY/d' .env
+	docker run --rm -it \
 	-v `pwd`/django_secret.py:/app/django_secret.py \
 	cannlytics-back \
 	python -c "from django.utils.crypto import get_random_string;print(get_random_string(50, 'abcdefghijklmnopqrstuvwxyz0123456789\!\@\#$%^&*(-_=+)'))" > sk
-	@echo SECRET_KEY=$$(cat sk) > .env
+	@echo SECRET_KEY=$$(cat sk) >> .env
 	@rm sk
 	@echo "Minimal .env file created"
