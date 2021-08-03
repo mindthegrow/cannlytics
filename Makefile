@@ -4,7 +4,7 @@ npm_image:
 	docker build -t npm-image -f Dockerfile-node .
 
 build:
-	docker build -t cannlytics-back -f Dockerfile .
+	docker build -t cannlytics -f Dockerfile .
 
 npm:
 	docker run --rm -it \
@@ -12,12 +12,12 @@ npm:
 	-v `pwd`:/app \
 	npm-image $(c)
 
-back: build .env
+run: install build .env
 	docker run --rm -it \
 	--name cannlytics-back \
 	-p 8089:8080 \
 	-v `pwd`/.env:/app/.env \
-	cannlytics-back
+	cannlytics
 
 
 install: npm_image node_modules
