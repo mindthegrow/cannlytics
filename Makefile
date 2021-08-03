@@ -1,37 +1,36 @@
 all: run
 
-build:
-	docker build -t cannlytics-front -f Dockerfile-node .
+npm_image:
+	docker build -t npm-image -f Dockerfile-node .
 
-build_back:
+build:
 	docker build -t cannlytics-back -f Dockerfile .
 
-run: build
+npm:
 	docker run --rm -it \
-	--name cannlytics-front \
-	-p 8088:8080 \
+	--name npm \
 	-v `pwd`:/app \
-	-v /app/node_modules \
-	--env-file docker.env \
-	cannlytics-front $(c)
+	npm-image $(c)
 
-back: build_back .env
+back: build .env
 	docker run --rm -it \
 	--name cannlytics-back \
 	-p 8089:8080 \
 	-v `pwd`/.env:/app/.env \
 	cannlytics-back
 
-install:
-	make run c="npm install"
+
+install: npm_image node_modules
+
+.PHONY: node_modules
+node_modules:
+	make npm c="npm install"
 
 update:
-	make run c="npm update"
+	make npm c="npm update"
 
 audit-fix:
-	make run c="npm audit fix"
-
-.PHONY: all build run update audit-fix
+	make npm c="npm audit fix"
 
 docker.env:
 	cp .env docker.env
