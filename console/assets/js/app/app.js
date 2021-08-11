@@ -36,10 +36,10 @@ export const app = {
     */
 
     // Redirect not signed in users to the homepage.
-    auth.onAuthStateChanged((user) => {
+      auth.onAuthStateChanged((user) => {
       const userNotLoaded = document.getElementById('userPhotoNav').src.endsWith('user.svg');
       // FIXME: Prefer to redirect from server.
-      if (!user || userNotLoaded) window.location.href = `${window.location.origin}/account/sign-in`;
+      // if (!user || userNotLoaded) window.location.href = `${window.location.origin}/account/sign-in`;
     });
 
     // Enable any and all tooltips.

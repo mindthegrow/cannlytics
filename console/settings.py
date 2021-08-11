@@ -197,7 +197,7 @@ ALLOWED_HOSTS = ['*']
 #     pass
 
 if PRODUCTION == 'False':
-    ALLOWED_HOSTS.extend(['*', 'localhost:8000', '127.0.0.1'])
+    ALLOWED_HOSTS.extend(['*', 'localhost:8000', '127.0.0.1', '0.0.0.0'])
 
 # ------------------------------------------------------------#
 # Database
